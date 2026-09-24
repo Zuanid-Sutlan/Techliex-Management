@@ -3,26 +3,23 @@ package com.techliexai.management.presetation.screen.orders
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.techliexai.management.data.database.Firebase
-import com.techliexai.management.domain.model.Order
+import com.techliexai.management.data.utils.DataError
+import com.techliexai.management.data.utils.Result
 import com.techliexai.management.domain.model.User
+import com.techliexai.management.domain.repository.OrderRepository
 import com.techliexai.management.domain.repository.UserPreferencesRepository
 import com.techliexai.management.presetation.components.enums.MessageType
 import com.techliexai.management.presetation.navigation.Screen
 import com.techliexai.management.presetation.utils.Constants
 import com.techliexai.management.presetation.utils.EventManager
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class OrdersViewModel(private val userPreferencesRepository: UserPreferencesRepository): ViewModel() {
-
-    private val orderRef = Firebase.getOrderReference()
+class OrdersViewModel(
+    private val orderRepository: OrderRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(OrderScreenState())
     val state = _state.asStateFlow()
@@ -34,33 +31,37 @@ class OrdersViewModel(private val userPreferencesRepository: UserPreferencesRepo
         fetchOrders()
     }
 
-    fun onAction(action: OrderScreenAction){
-        when(action){
+    fun onAction(action: OrderScreenAction) {
+        when (action) {
             is OrderScreenAction.OnNavigateBackClicked -> {
                 EventManager.navigateBack()
             }
+
             is OrderScreenAction.OnSearchQueryChanged -> {
                 _state.value = _state.value.copy(searchQuery = action.query)
             }
+
             is OrderScreenAction.OnAddOrderClicked -> {
                 EventManager.navigateTo(Screen.AddOrderScreen)
             }
+
             is OrderScreenAction.OnOrderClicked -> {
                 EventManager.navigateTo(Screen.OrderDetailScreen(action.order.id))
             }
         }
     }
 
-    fun fetchOrders(){
+    fun fetchOrders() {
         viewModelScope.launch {
-            orderRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val orders = snapshot.children.mapNotNull { it.getValue(Order::class.java) }
+            when (val result = orderRepository.getOrders()) {
+                is Result.Success -> {
+                    val orders = result.data
                     val filteredOrders = orders.filter {
-                        it.addedBy == user.value.name.ifEmpty { Constants.getUser().name } || user.value.role.ifEmpty { Constants.getUser().role } == "Admin"
+                        it.addedBy == user.value.name.ifEmpty { Constants.getUser().name } ||
+                                user.value.role.ifEmpty { Constants.getUser().role } == "Admin"
                     }
                     val sortedOrders = filteredOrders.sortedBy {
-                        when(it.status){
+                        when (it.status) {
                             "Active" -> 0
                             "Shipped" -> 1
                             "Completed" -> 2
@@ -70,15 +71,18 @@ class OrdersViewModel(private val userPreferencesRepository: UserPreferencesRepo
                     _state.value = _state.value.copy(orders = sortedOrders)
                 }
 
-                override fun onCancelled(error: DatabaseError) {
-                    EventManager.showMessage(error.message, MessageType.ERROR)
+                is Result.Failure -> {
+                    val errorMsg = when (val error = result.error) {
+                        is DataError.Unknown -> error.message ?: "Failed to fetch orders"
+                        else -> "Failed to fetch orders"
+                    }
+                    EventManager.showMessage(errorMsg, MessageType.ERROR)
                 }
-
-            })
+            }
         }
     }
 
-    fun checkIsAdmin(){
+    fun checkIsAdmin() {
         viewModelScope.launch {
             userPreferencesRepository.getUser().collect {
                 _state.value = _state.value.copy(currentUserId = it.id)
@@ -86,5 +90,4 @@ class OrdersViewModel(private val userPreferencesRepository: UserPreferencesRepo
             }
         }
     }
-
 }

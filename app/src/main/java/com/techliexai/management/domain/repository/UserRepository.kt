@@ -8,11 +8,10 @@ interface UserRepository {
 
     suspend fun createUser(user: User): Result<String, DataError>
 
+    suspend fun getUsers(): Result<List<User>, DataError>
+
     suspend fun getUserByUsername(username: String): Result<User, DataError>
 
-    suspend fun updateUser(user: User): Result<User, DataError>
-
-    suspend fun deleteUser(user: User): Result<Unit, DataError>
-
+    suspend fun deleteUser(username: String): Result<Unit, DataError>
 
 }

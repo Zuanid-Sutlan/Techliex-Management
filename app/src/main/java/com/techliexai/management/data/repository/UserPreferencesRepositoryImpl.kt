@@ -9,8 +9,8 @@ import com.techliexai.management.data.utils.Constant
 import com.techliexai.management.domain.model.User
 import com.techliexai.management.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.json.Json
 
 class UserPreferencesRepositoryImpl(private val prefs: DataStore<Preferences>): UserPreferencesRepository {
 
@@ -19,6 +19,7 @@ class UserPreferencesRepositoryImpl(private val prefs: DataStore<Preferences>): 
         private val NAME_PREF_KEY = stringPreferencesKey(Constant.NAME)
         private val USER_ID_PREF_KEY = intPreferencesKey(Constant.USER_ID)
         private val USER_ROLE_PREF_KEY = stringPreferencesKey(Constant.USER_ROLE)
+        private val AUTH_TOKEN_PREF_KEY = stringPreferencesKey(Constant.AUTH_TOKEN)
     }
 
     override suspend fun saveUser(user: User) {
@@ -38,6 +39,24 @@ class UserPreferencesRepositoryImpl(private val prefs: DataStore<Preferences>): 
             val userRole = preferences[USER_ROLE_PREF_KEY] ?: ""
             User(username = username, name = name, id = userId, role = userRole)
         }
+    }
+
+    override suspend fun saveToken(token: String) {
+        prefs.edit { preferences ->
+            preferences[AUTH_TOKEN_PREF_KEY] = token
+        }
+    }
+
+    override fun getToken(): Flow<String> {
+        return prefs.data.map { preferences ->
+            preferences[AUTH_TOKEN_PREF_KEY] ?: ""
+        }
+    }
+
+    override suspend fun getTokenSync(): String? {
+        return prefs.data.map { preferences ->
+            preferences[AUTH_TOKEN_PREF_KEY]
+        }.firstOrNull()
     }
 
     override suspend fun clearUser() {

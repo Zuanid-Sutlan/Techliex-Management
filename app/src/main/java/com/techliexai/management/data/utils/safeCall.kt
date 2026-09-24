@@ -1,8 +1,12 @@
 package com.techliexai.management.data.utils
 
-import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.database.DatabaseException
-import com.google.firebase.auth.FirebaseAuthException
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpRequestTimeoutException
+import io.ktor.client.plugins.RedirectResponseException
+import io.ktor.client.plugins.ServerResponseException
+import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.SerializationException
+import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
@@ -26,32 +30,32 @@ suspend inline fun <reified T> safeCall(
     execute: suspend () -> T
 ): Result<T, DataError> {
     val response = try {
-        // Execute the function
         execute()
     } catch (e: UnknownHostException) {
-        // Handle No Internet scenario
         return Result.Failure(DataError.NoInternet)
     } catch (e: UnresolvedAddressException) {
-        // Handle No Internet scenario
         return Result.Failure(DataError.NoInternet)
     } catch (e: SocketTimeoutException) {
-        // Handle Timeout scenario
         return Result.Failure(DataError.RequestTimeout)
-    } catch (e: FirebaseNetworkException) {
-        // Handle Firebase Network Error
-        return Result.Failure(DataError.NoInternet)
-    } catch (e: FirebaseAuthException) {
-        // Handle Firebase Authentication Error
-        return Result.Failure(DataError.AuthenticationError)
-    } catch (e: DatabaseException) {
-        // Handle Firebase Database error
+    } catch (e: HttpRequestTimeoutException) {
+        return Result.Failure(DataError.RequestTimeout)
+    } catch (e: ClientRequestException) {
+        if (e.response.status == HttpStatusCode.Unauthorized || e.response.status == HttpStatusCode.Forbidden) {
+            return Result.Failure(DataError.AuthenticationError)
+        }
+        return Result.Failure(DataError.Unknown(e.message))
+    } catch (e: ServerResponseException) {
         return Result.Failure(DataError.ServerError)
+    } catch (e: RedirectResponseException) {
+        return Result.Failure(DataError.Unknown(e.message))
+    } catch (e: SerializationException) {
+        return Result.Failure(DataError.Serialization)
+    } catch (e: IOException) {
+        return Result.Failure(DataError.NoInternet)
     } catch (e: Exception) {
-        // Catch all other exceptions
         e.printStackTrace()
         return Result.Failure(DataError.Unknown(e.message))
     }
 
-    // Return success if no exceptions
     return Result.Success(response)
 }

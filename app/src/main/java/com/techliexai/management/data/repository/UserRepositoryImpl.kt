@@ -1,55 +1,64 @@
 package com.techliexai.management.data.repository
 
-import com.google.firebase.database.DatabaseException
-import com.techliexai.management.data.database.Firebase
+import com.techliexai.management.data.remote.api.UserApiService
+import com.techliexai.management.data.remote.dto.CreateUserRequest
 import com.techliexai.management.data.utils.DataError
 import com.techliexai.management.data.utils.Result
 import com.techliexai.management.data.utils.safeCall
 import com.techliexai.management.domain.model.User
 import com.techliexai.management.domain.repository.UserRepository
-import kotlinx.coroutines.tasks.await
 
-class UserRepositoryImpl: UserRepository {
+class UserRepositoryImpl(
+    private val userApiService: UserApiService
+) : UserRepository {
 
-    private val accounts = Firebase.getAccountReference()
-
-    // Create user in the Firebase Realtime Database
     override suspend fun createUser(user: User): Result<String, DataError> {
         return safeCall {
-            val userRef = accounts.child(user.username)
-            // Set user details in the "accounts" node
-            userRef.setValue(user).await()
-            "User created successfully"
+            val request = CreateUserRequest(
+                username = user.username,
+                password = user.password,
+                name = user.name,
+                role = user.role.ifEmpty { "Member" }
+            )
+            val response = userApiService.createUser(request)
+            if (response.success) {
+                response.message ?: "User created successfully"
+            } else {
+                throw Exception(response.message ?: "Failed to create user")
+            }
         }
     }
 
-    // Fetch user by username
+    override suspend fun getUsers(): Result<List<User>, DataError> {
+        return safeCall {
+            val response = userApiService.getUsers()
+            if (response.success && response.data != null) {
+                response.data.map { it.toDomainUser() }
+            } else {
+                throw Exception(response.message ?: "Failed to fetch users")
+            }
+        }
+    }
+
     override suspend fun getUserByUsername(username: String): Result<User, DataError> {
         return safeCall {
-            val userRef = accounts.child(username)
-            val snapshot = userRef.get().await()
-            snapshot.getValue(User::class.java) ?: throw DatabaseException("User not found")
+            val response = userApiService.getUserByUsername(username)
+            if (response.success && response.data != null) {
+                response.data.toDomainUser()
+            } else {
+                throw Exception(response.message ?: "User not found")
+            }
         }
     }
 
-    // Update user details in the Firebase Realtime Database
-    override suspend fun updateUser(user: User): Result<User, DataError> {
+    override suspend fun deleteUser(username: String): Result<Unit, DataError> {
         return safeCall {
-            val userRef = accounts.child(user.username)
-            // Update user details
-            userRef.setValue(user).await()
-            user // Return the updated user object
+            val response = userApiService.deleteUser(username)
+            if (response.success) {
+                Unit
+            } else {
+                throw Exception(response.message ?: "Failed to delete user")
+            }
         }
     }
-
-    // Delete user from the Firebase Realtime Database
-    override suspend fun deleteUser(user: User): Result<Unit, DataError> {
-        return safeCall {
-            val userRef = accounts.child(user.username)
-            // Delete user from the database
-            userRef.removeValue().await()
-        }
-    }
-
-
 }

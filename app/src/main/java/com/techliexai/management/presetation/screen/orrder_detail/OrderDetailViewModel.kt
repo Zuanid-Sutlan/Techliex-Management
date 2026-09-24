@@ -2,8 +2,9 @@ package com.techliexai.management.presetation.screen.orrder_detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.techliexai.management.data.database.Firebase
-import com.techliexai.management.domain.model.Order
+import com.techliexai.management.data.utils.DataError
+import com.techliexai.management.data.utils.Result
+import com.techliexai.management.domain.repository.OrderRepository
 import com.techliexai.management.domain.repository.UserPreferencesRepository
 import com.techliexai.management.presetation.components.enums.MessageType
 import com.techliexai.management.presetation.utils.EventManager
@@ -11,10 +12,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class OrderDetailViewModel(private val userPreferencesRepository: UserPreferencesRepository) :
-    ViewModel() {
-
-    private val orderRef = Firebase.getOrderReference()
+class OrderDetailViewModel(
+    private val orderRepository: OrderRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(OrderDetailScreenState())
     val state = _state.asStateFlow()
@@ -29,9 +30,7 @@ class OrderDetailViewModel(private val userPreferencesRepository: UserPreference
                 EventManager.navigateBack()
             }
 
-            is OrderDetailScreenAction.OnEditClicked -> {
-
-            }
+            is OrderDetailScreenAction.OnEditClicked -> {}
 
             is OrderDetailScreenAction.OnLoadOrder -> {
                 fetchOrder(action.orderId)
@@ -47,16 +46,25 @@ class OrderDetailViewModel(private val userPreferencesRepository: UserPreference
         }
     }
 
-
     private fun fetchOrder(orderId: Int) {
-        orderRef.child("Order_$orderId").get().addOnSuccessListener {
-            val order = it.getValue(Order::class.java)
-            _state.value = _state.value.copy(order = order)
+        viewModelScope.launch {
+            when (val result = orderRepository.getOrderById(orderId.toLong())) {
+                is Result.Success -> {
+                    _state.value = _state.value.copy(order = result.data)
+                }
+
+                is Result.Failure -> {
+                    val errorMsg = when (val error = result.error) {
+                        is DataError.Unknown -> error.message ?: "Failed to fetch order"
+                        else -> "Failed to fetch order"
+                    }
+                    EventManager.showMessage(errorMsg, MessageType.ERROR)
+                }
+            }
         }
     }
 
     private fun updateOrderLogistics(orderId: Int, trackingId: String, company: String) {
-        // 1. Guard clause for invalid IDs
         if (orderId <= 0) {
             EventManager.showMessage("Invalid Order ID", MessageType.ERROR)
             return
@@ -64,34 +72,22 @@ class OrderDetailViewModel(private val userPreferencesRepository: UserPreference
 
         viewModelScope.launch {
             EventManager.showLoading()
-
-            // 2. Prepare the map of specific fields to update
-            val updates = mapOf(
-                "trackId" to trackingId,
-                "company" to company,
-                "status" to "Shipped"
-            )
-
-            // 3. Update only these specific keys in the "Order_X" node
-            orderRef.child("Order_$orderId").updateChildren(updates)
-                .addOnSuccessListener {
+            when (val result = orderRepository.updateLogistics(orderId.toLong(), trackingId, company)) {
+                is Result.Success -> {
                     EventManager.hideLoading()
                     EventManager.showMessage("Logistics updated successfully!", MessageType.SUCCESS)
+                    _state.value = _state.value.copy(order = result.data)
+                }
 
-                    // 4. Update local state so the UI refreshes immediately
-//                    val currentOrders = _state.value.orders.map { order ->
-//                        if (order.id == orderId) {
-//                            order.copy(trackId = trackingId, company = company)
-//                        } else order
-//                    }
-                    val currentOrder =
-                        _state.value.order?.copy(trackId = trackingId, company = company)
-                    _state.value = _state.value.copy(order = currentOrder)
-                }
-                .addOnFailureListener { error ->
+                is Result.Failure -> {
                     EventManager.hideLoading()
-                    EventManager.showMessage("Update failed: ${error.message}", MessageType.ERROR)
+                    val errorMsg = when (val error = result.error) {
+                        is DataError.Unknown -> error.message ?: "Update failed"
+                        else -> "Update failed"
+                    }
+                    EventManager.showMessage(errorMsg, MessageType.ERROR)
                 }
+            }
         }
     }
 
@@ -103,32 +99,22 @@ class OrderDetailViewModel(private val userPreferencesRepository: UserPreference
 
         viewModelScope.launch {
             EventManager.showLoading()
-
-            // 2. Prepare the map of specific fields to update
-            val updates = mapOf(
-                "status" to "Completed"
-            )
-
-            // 3. Update only these specific keys in the "Order_X" node
-            orderRef.child("Order_$orderId").updateChildren(updates)
-                .addOnSuccessListener {
+            when (val result = orderRepository.completeOrder(orderId.toLong())) {
+                is Result.Success -> {
                     EventManager.hideLoading()
-                    EventManager.showMessage("Logistics updated successfully!", MessageType.SUCCESS)
+                    EventManager.showMessage("Order completed successfully!", MessageType.SUCCESS)
+                    _state.value = _state.value.copy(order = result.data)
+                }
 
-                    // 4. Update local state so the UI refreshes immediately
-//                    val currentOrders = _state.value.orders.map { order ->
-//                        if (order.id == orderId) {
-//                            order.copy(trackId = trackingId, company = company)
-//                        } else order
-//                    }
-                    val currentOrder =
-                        _state.value.order?.copy(status = "Completed")
-                    _state.value = _state.value.copy(order = currentOrder)
-                }
-                .addOnFailureListener { error ->
+                is Result.Failure -> {
                     EventManager.hideLoading()
-                    EventManager.showMessage("Update failed: ${error.message}", MessageType.ERROR)
+                    val errorMsg = when (val error = result.error) {
+                        is DataError.Unknown -> error.message ?: "Update failed"
+                        else -> "Update failed"
+                    }
+                    EventManager.showMessage(errorMsg, MessageType.ERROR)
                 }
+            }
         }
     }
 
@@ -139,5 +125,4 @@ class OrderDetailViewModel(private val userPreferencesRepository: UserPreference
             }
         }
     }
-
 }

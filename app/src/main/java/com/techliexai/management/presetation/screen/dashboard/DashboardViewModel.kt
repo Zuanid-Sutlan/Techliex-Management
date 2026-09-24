@@ -1,33 +1,24 @@
 package com.techliexai.management.presetation.screen.dashboard
 
-import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.techliexai.management.data.database.Firebase
-import com.techliexai.management.domain.model.Order
+import com.techliexai.management.data.utils.Result
 import com.techliexai.management.domain.model.User
+import com.techliexai.management.domain.repository.DashboardRepository
 import com.techliexai.management.domain.repository.UserPreferencesRepository
 import com.techliexai.management.presetation.components.enums.MessageType
 import com.techliexai.management.presetation.navigation.Screen
 import com.techliexai.management.presetation.screen.dashboard.screen.DrawerItems
-import com.techliexai.management.presetation.utils.Constants
 import com.techliexai.management.presetation.utils.EventManager
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class DashboardViewModel(private val userPreferencesRepository: UserPreferencesRepository) :
-    ViewModel() {
-
-    private val accountRef = Firebase.getAccountReference()
-    private val productRef = Firebase.getProductHuntReference()
-    private val orderRef = Firebase.getOrderReference()
+class DashboardViewModel(
+    private val dashboardRepository: DashboardRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(DashboardState())
     val state = _state.asStateFlow()
@@ -43,48 +34,34 @@ class DashboardViewModel(private val userPreferencesRepository: UserPreferencesR
                     isAdmin = it.role == "Admin"
                 )
                 user.value = it
+                loadDashboardStats()
             }
-        }
-        viewModelScope.launch {
-            productRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val productCount = snapshot.childrenCount.toInt()
-                    _state.value = _state.value.copy(products = productCount)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    EventManager.showMessage(error.message, MessageType.ERROR)
-                }
-            })
-        }
-        viewModelScope.launch {
-            orderRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val orderCount = snapshot.children.mapNotNull { it.getValue(Order::class.java) }
-                    val myOrders = orderCount.filter {
-                        it.addedBy == user.value.name.ifEmpty { Constants.getUser().name } || user.value.role.ifEmpty { Constants.getUser().role } == "Admin"
-                    }
-                    _state.value =
-                        _state.value.copy(
-                            activeOrders = myOrders.filter { it.status == "Active" }.size,
-                            totalEarnings = "$${myOrders.sumOf { it.listingPrice.toDouble() }}"
-                        )
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-
-            })
         }
     }
 
+    fun loadDashboardStats() {
+        viewModelScope.launch {
+            when (val result = dashboardRepository.getDashboardStats()) {
+                is Result.Success -> {
+                    val stats = result.data
+                    _state.value = _state.value.copy(
+                        products = stats.productCount.toInt(),
+                        activeOrders = stats.activeOrdersCount.toInt(),
+                        totalEarnings = "$${stats.totalEarnings}"
+                    )
+                }
+
+                is Result.Failure -> {
+                    // Handle failure gracefully
+                }
+            }
+        }
+    }
 
     fun onAction(action: DashboardAction) {
         when (action) {
             is DashboardAction.OnNavigateContentClicked -> {
                 when (action.item) {
-//                    DrawerItems.DASHBOARD -> EventManager.navigateTo(Screen.DashboardScreen)
                     DrawerItems.MEMBERS -> EventManager.navigateTo(Screen.MembersScreen)
                     DrawerItems.PRODUCTS -> EventManager.navigateTo(Screen.HuntProductScreen)
                     DrawerItems.ORDERS -> EventManager.navigateTo(Screen.OrdersScreen)
@@ -98,9 +75,7 @@ class DashboardViewModel(private val userPreferencesRepository: UserPreferencesR
 
                     else -> {}
                 }
-//                _state.value = _state.value.copy(selectedItem = action.item)
             }
         }
     }
-
 }

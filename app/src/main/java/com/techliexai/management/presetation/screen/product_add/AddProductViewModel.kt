@@ -3,26 +3,27 @@ package com.techliexai.management.presetation.screen.product_add
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.techliexai.management.data.database.Firebase
+import com.techliexai.management.data.utils.DataError
+import com.techliexai.management.data.utils.Result
 import com.techliexai.management.domain.model.ProductHunt
-import com.techliexai.management.domain.model.User
+import com.techliexai.management.domain.repository.MediaRepository
+import com.techliexai.management.domain.repository.ProductRepository
 import com.techliexai.management.domain.repository.UserPreferencesRepository
+import com.techliexai.management.domain.repository.UserRepository
 import com.techliexai.management.presetation.components.enums.MessageType
 import com.techliexai.management.presetation.utils.EventManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlin.jvm.java
 
 class AddProductViewModel(
     private val context: Context,
+    private val userRepository: UserRepository,
+    private val productRepository: ProductRepository,
+    private val mediaRepository: MediaRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
-
-    private val productRef = Firebase.getProductHuntReference()
-    private val accountRef = Firebase.getAccountReference()
 
     private val _state = MutableStateFlow(AddProductScreenState())
     val state = _state.asStateFlow()
@@ -77,17 +78,20 @@ class AddProductViewModel(
 
     fun fetchUsers() {
         viewModelScope.launch {
-            val users = accountRef.get().await().children.mapNotNull {
-                it.getValue(User::class.java)
+            when (val result = userRepository.getUsers()) {
+                is Result.Success -> {
+                    _state.value = _state.value.copy(members = result.data)
+                }
+
+                is Result.Failure -> {
+                    // Handle error gracefully
+                }
             }
-            _state.value = _state.value.copy(members = users)
         }
     }
 
     fun saveProduct() {
         viewModelScope.launch {
-
-            // validation fields
             if (_state.value.title.isEmpty() || _state.value.note.isEmpty() || _state.value.productImage.isEmpty() ||
                 _state.value.sourceLink.isEmpty() || _state.value.sourcePrice == 0 ||
                 _state.value.referenceLink.isEmpty() || _state.value.referencePrice == 0
@@ -98,10 +102,8 @@ class AddProductViewModel(
 
             EventManager.showLoading()
 
-
-            val id = productRef.get().await().childrenCount.toInt() + 1
+            val currentUser = userPreferencesRepository.getUser().firstOrNull()
             val product = ProductHunt(
-                id = id,
                 title = _state.value.title,
                 description = _state.value.note,
                 productImage = _state.value.productImage,
@@ -109,24 +111,27 @@ class AddProductViewModel(
                 sourcePrice = _state.value.sourcePrice,
                 referenceLink = _state.value.referenceLink,
                 referencePrice = _state.value.referencePrice,
-                addedByUserId = userPreferencesRepository.getUser().firstOrNull()?.id
-                    ?: -1,
-                addedBy = userPreferencesRepository.getUser().firstOrNull()?.username
-                    ?: "anonymous",
+                addedByUserId = currentUser?.id ?: -1,
+                addedBy = currentUser?.username ?: "anonymous",
                 shareWith = _state.value.shareWith.map { it.username }
             )
-            productRef.child("Product_$id").setValue(product)
-                .addOnSuccessListener {
+
+            when (val result = productRepository.createProduct(product)) {
+                is Result.Success -> {
                     EventManager.showMessage("Product saved successfully", MessageType.SUCCESS)
                     EventManager.navigateBack()
                     EventManager.hideLoading()
                 }
-                .addOnFailureListener {
-                    EventManager.showMessage(it.message.toString(), MessageType.ERROR)
+
+                is Result.Failure -> {
                     EventManager.hideLoading()
+                    val errorMsg = when (val error = result.error) {
+                        is DataError.Unknown -> error.message ?: "Failed to save product"
+                        else -> "Failed to save product"
+                    }
+                    EventManager.showMessage(errorMsg, MessageType.ERROR)
                 }
+            }
         }
-
     }
-
 }
