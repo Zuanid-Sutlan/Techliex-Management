@@ -1,0 +1,6 @@
+[
+    {
+        "merged": "com.techliexai.management.shared-release-56:/drawable-v23/abc_control_background_material.xml",
+        "source": "com.techliexai.management.shared-appcompat-1.7.1-35:/drawable-v23/abc_control_background_material.xml"
+    }
+]

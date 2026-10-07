@@ -1,0 +1,132 @@
+{
+  "projectStructure": {
+    "formatVersion": "0.3.3",
+    "isPublishedAsRoot": "true",
+    "variants": [
+      {
+        "name": "releaseApiElements",
+        "sourceSet": [
+          "jvmCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "releaseRuntimeElements",
+        "sourceSet": [
+          "jvmCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmStubsApiElements",
+        "sourceSet": [
+          "jvmCommonMain",
+          "commonMain",
+          "nonAndroidMain"
+        ]
+      },
+      {
+        "name": "jvmStubsRuntimeElements",
+        "sourceSet": [
+          "jvmCommonMain",
+          "commonMain",
+          "nonAndroidMain"
+        ]
+      },
+      {
+        "name": "linuxx64StubsApiElements",
+        "sourceSet": [
+          "nonAndroidMain",
+          "commonMain"
+        ]
+      }
+    ],
+    "sourceSets": [
+      {
+        "name": "commonMain",
+        "dependsOn": [],
+        "moduleDependency": [
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "androidx.navigation:navigation-runtime",
+          "androidx.navigation:navigation-common",
+          "androidx.compose.runtime:runtime",
+          "androidx.compose.ui:ui",
+          "androidx.compose.animation:animation",
+          "androidx.compose.runtime:runtime-saveable",
+          "androidx.annotation:annotation",
+          "androidx.compose.animation:animation-core",
+          "androidx.compose.foundation:foundation-layout",
+          "androidx.collection:collection",
+          "androidx.lifecycle:lifecycle-common",
+          "androidx.lifecycle:lifecycle-runtime-compose",
+          "androidx.lifecycle:lifecycle-viewmodel-savedstate",
+          "androidx.lifecycle:lifecycle-viewmodel",
+          "androidx.lifecycle:lifecycle-viewmodel-compose",
+          "androidx.savedstate:savedstate",
+          "androidx.savedstate:savedstate-compose",
+          "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+          "org.jetbrains.kotlinx:kotlinx-serialization-core"
+        ],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "jvmCommonMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "androidx.navigation:navigation-runtime",
+          "androidx.navigation:navigation-common",
+          "androidx.compose.runtime:runtime",
+          "androidx.compose.ui:ui",
+          "androidx.compose.animation:animation",
+          "androidx.compose.runtime:runtime-saveable",
+          "androidx.annotation:annotation",
+          "androidx.compose.animation:animation-core",
+          "androidx.compose.foundation:foundation-layout",
+          "androidx.collection:collection",
+          "androidx.lifecycle:lifecycle-common",
+          "androidx.lifecycle:lifecycle-runtime-compose",
+          "androidx.lifecycle:lifecycle-viewmodel-savedstate",
+          "androidx.lifecycle:lifecycle-viewmodel",
+          "androidx.lifecycle:lifecycle-viewmodel-compose",
+          "androidx.savedstate:savedstate",
+          "androidx.savedstate:savedstate-compose",
+          "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+          "org.jetbrains.kotlinx:kotlinx-serialization-core"
+        ],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "nonAndroidMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "androidx.navigation:navigation-runtime",
+          "androidx.navigation:navigation-common",
+          "androidx.compose.runtime:runtime",
+          "androidx.compose.ui:ui",
+          "androidx.compose.animation:animation",
+          "androidx.compose.runtime:runtime-saveable",
+          "androidx.annotation:annotation",
+          "androidx.compose.animation:animation-core",
+          "androidx.compose.foundation:foundation-layout",
+          "androidx.collection:collection",
+          "androidx.lifecycle:lifecycle-common",
+          "androidx.lifecycle:lifecycle-runtime-compose",
+          "androidx.lifecycle:lifecycle-viewmodel-savedstate",
+          "androidx.lifecycle:lifecycle-viewmodel",
+          "androidx.lifecycle:lifecycle-viewmodel-compose",
+          "androidx.savedstate:savedstate",
+          "androidx.savedstate:savedstate-compose",
+          "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+          "org.jetbrains.kotlinx:kotlinx-serialization-core"
+        ],
+        "binaryLayout": "klib"
+      }
+    ]
+  }
+}

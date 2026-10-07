@@ -1,0 +1,99 @@
+{
+  "projectStructure": {
+    "formatVersion": "0.3.3",
+    "isPublishedAsRoot": "true",
+    "variants": [
+      {
+        "name": "releaseApiElements",
+        "sourceSet": [
+          "jvmCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "releaseRuntimeElements",
+        "sourceSet": [
+          "jvmCommonMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmStubsApiElements",
+        "sourceSet": [
+          "jvmCommonMain",
+          "commonMain",
+          "nonAndroidMain"
+        ]
+      },
+      {
+        "name": "jvmStubsRuntimeElements",
+        "sourceSet": [
+          "jvmCommonMain",
+          "commonMain",
+          "nonAndroidMain"
+        ]
+      },
+      {
+        "name": "linuxx64StubsApiElements",
+        "sourceSet": [
+          "nonAndroidMain",
+          "commonMain"
+        ]
+      }
+    ],
+    "sourceSets": [
+      {
+        "name": "commonMain",
+        "dependsOn": [],
+        "moduleDependency": [
+          "androidx.annotation:annotation",
+          "androidx.lifecycle:lifecycle-common",
+          "androidx.lifecycle:lifecycle-runtime",
+          "androidx.lifecycle:lifecycle-viewmodel",
+          "androidx.lifecycle:lifecycle-viewmodel-savedstate",
+          "androidx.savedstate:savedstate",
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "androidx.collection:collection",
+          "org.jetbrains.kotlinx:kotlinx-serialization-core"
+        ],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "jvmCommonMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [
+          "androidx.annotation:annotation",
+          "androidx.lifecycle:lifecycle-common",
+          "androidx.lifecycle:lifecycle-runtime",
+          "androidx.lifecycle:lifecycle-viewmodel",
+          "androidx.lifecycle:lifecycle-viewmodel-savedstate",
+          "androidx.savedstate:savedstate",
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "androidx.collection:collection",
+          "org.jetbrains.kotlinx:kotlinx-serialization-core"
+        ],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "nonAndroidMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [
+          "androidx.annotation:annotation",
+          "androidx.lifecycle:lifecycle-common",
+          "androidx.lifecycle:lifecycle-runtime",
+          "androidx.lifecycle:lifecycle-viewmodel",
+          "androidx.lifecycle:lifecycle-viewmodel-savedstate",
+          "androidx.savedstate:savedstate",
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "androidx.collection:collection",
+          "org.jetbrains.kotlinx:kotlinx-serialization-core"
+        ],
+        "binaryLayout": "klib"
+      }
+    ]
+  }
+}

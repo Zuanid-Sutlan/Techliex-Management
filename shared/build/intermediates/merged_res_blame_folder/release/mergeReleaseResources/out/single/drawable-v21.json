@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.techliexai.management.shared-release-56:/drawable-v21/abc_btn_colored_material.xml",
+        "source": "com.techliexai.management.shared-appcompat-1.7.1-35:/drawable-v21/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "com.techliexai.management.shared-release-56:/drawable-v21/abc_edit_text_material.xml",
+        "source": "com.techliexai.management.shared-appcompat-1.7.1-35:/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "com.techliexai.management.shared-release-56:/drawable-v21/abc_dialog_material_background.xml",
+        "source": "com.techliexai.management.shared-appcompat-1.7.1-35:/drawable-v21/abc_dialog_material_background.xml"
+    },
+    {
+        "merged": "com.techliexai.management.shared-release-56:/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "com.techliexai.management.shared-appcompat-1.7.1-35:/drawable-v21/abc_action_bar_item_background_material.xml"
+    },
+    {
+        "merged": "com.techliexai.management.shared-release-56:/drawable-v21/abc_list_divider_material.xml",
+        "source": "com.techliexai.management.shared-appcompat-1.7.1-35:/drawable-v21/abc_list_divider_material.xml"
+    },
+    {
+        "merged": "com.techliexai.management.shared-release-56:/drawable-v21/notification_action_background.xml",
+        "source": "com.techliexai.management.shared-core-1.16.0-40:/drawable-v21/notification_action_background.xml"
+    }
+]

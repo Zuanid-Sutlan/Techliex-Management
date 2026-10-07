@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest3591317949518700661.xml:2:13-83
+INJECTED from /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest3591317949518700661.xml:2:13-83
+	package
+		INJECTED from /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest3591317949518700661.xml
+	xmlns:android
+		ADDED from /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest3591317949518700661.xml:2:23-81
+uses-sdk
+INJECTED from /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest3591317949518700661.xml reason: use-sdk injection requested
+INJECTED from /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest3591317949518700661.xml
+INJECTED from /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest3591317949518700661.xml
+	android:targetSdkVersion
+		INJECTED from /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest3591317949518700661.xml
+	android:minSdkVersion
+		INJECTED from /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest3591317949518700661.xml

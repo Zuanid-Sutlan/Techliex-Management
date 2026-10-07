@@ -9,6 +9,8 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.public.kotlin/public/p/compose/dev")
+        maven("https://maven.pkg.jetbrains.public.kotlin/public/p/compose/release")
     }
 }
 dependencyResolutionManagement {
@@ -16,9 +18,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://maven.pkg.jetbrains.public.kotlin/public/p/compose/dev")
+        maven("https://maven.pkg.jetbrains.public.kotlin/public/p/compose/release")
     }
 }
 
 rootProject.name = "Management"
 include(":app")
- 
+include(":shared")

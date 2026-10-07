@@ -1,0 +1,6 @@
+[
+    {
+        "merged": "com.techliexai.management.shared-release-56:/raw/firebase_common_keep.xml",
+        "source": "com.techliexai.management.shared-firebase-common-22.0.1-22:/raw/firebase_common_keep.xml"
+    }
+]

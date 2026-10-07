@@ -1,0 +1,11 @@
+com.techliexai.management.shared-pngs-0 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/generated/res/pngs/release
+com.techliexai.management.shared-updated_navigation_xml-1 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/generated/updated_navigation_xml/release
+com.techliexai.management.shared-mergeReleaseResources-2 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
+com.techliexai.management.shared-mergeReleaseResources-3 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+com.techliexai.management.shared-release-4 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/merged_res/release/mergeReleaseResources
+com.techliexai.management.shared-release-5 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/build/intermediates/packaged_res/release/packageReleaseResources
+com.techliexai.management.shared-androidMain-6 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/src/androidMain/res
+com.techliexai.management.shared-androidRelease-7 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/src/androidRelease/res
+com.techliexai.management.shared-main-8 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/src/main/res
+com.techliexai.management.shared-release-9 /Users/apple/Desktop/AndroidProjects/Bitencoders/Techliex-Management/shared/src/release/res
+gradleHome-0 /Users/apple/.gradle
