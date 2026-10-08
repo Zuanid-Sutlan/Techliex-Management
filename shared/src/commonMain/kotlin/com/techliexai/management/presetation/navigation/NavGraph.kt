@@ -34,6 +34,7 @@ import com.techliexai.management.presetation.screen.product_detail.ProductDetail
 import com.techliexai.management.presetation.screen.product_detail.ProductDetailViewModel
 import com.techliexai.management.presetation.screen.products.HuntProductScreen
 import com.techliexai.management.presetation.screen.products.HuntProductViewModel
+import com.techliexai.management.presetation.screen.settings.SettingsScreen
 
 @Composable
 fun NavGraph(
@@ -143,6 +144,9 @@ fun NavGraph(
                 state = state,
                 onAction = orderDetailViewModel::onAction
             )
+        }
+        composable<Screen.SettingsScreen> {
+            SettingsScreen()
         }
     }
 }
