@@ -1,5 +1,4 @@
 plugins {
-    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
@@ -7,12 +6,6 @@ plugins {
 }
 
 kotlin {
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-        }
-    }
-    
     jvm("desktop") {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
@@ -37,13 +30,6 @@ kotlin {
                 implementation(libs.androidx.compose.material.icons.extended)
             }
         }
-        val androidMain by getting {
-            dependencies {
-                implementation("io.insert-koin:koin-android:4.2.2")
-                implementation("io.insert-koin:koin-androidx-compose:4.2.2")
-                implementation(libs.firebase.database)
-            }
-        }
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
@@ -51,18 +37,6 @@ kotlin {
                 implementation("io.insert-koin:koin-compose:4.2.2")
             }
         }
-    }
-}
-
-android {
-    namespace = "com.techliexai.management.shared"
-    compileSdk = 37
-    defaultConfig {
-        minSdk = 24
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 

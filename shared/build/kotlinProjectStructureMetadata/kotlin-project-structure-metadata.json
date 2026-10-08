@@ -4,30 +4,6 @@
     "isPublishedAsRoot": "true",
     "variants": [
       {
-        "name": "debugApiElements",
-        "sourceSet": [
-          "commonMain"
-        ]
-      },
-      {
-        "name": "debugRuntimeElements",
-        "sourceSet": [
-          "commonMain"
-        ]
-      },
-      {
-        "name": "releaseApiElements",
-        "sourceSet": [
-          "commonMain"
-        ]
-      },
-      {
-        "name": "releaseRuntimeElements",
-        "sourceSet": [
-          "commonMain"
-        ]
-      },
-      {
         "name": "desktopApiElements",
         "sourceSet": [
           "commonMain"
@@ -44,22 +20,7 @@
       {
         "name": "commonMain",
         "dependsOn": [],
-        "moduleDependency": [
-          "org.jetbrains.kotlin:kotlin-stdlib",
-          "org.jetbrains.compose.runtime:runtime",
-          "org.jetbrains.compose.foundation:foundation",
-          "org.jetbrains.compose.material3:material3",
-          "org.jetbrains.compose.ui:ui",
-          "org.jetbrains.compose.components:components-resources",
-          "org.jetbrains.compose.components:components-ui-tooling-preview",
-          "org.jetbrains.androidx.navigation:navigation-compose",
-          "org.jetbrains.kotlinx:kotlinx-serialization-json",
-          "io.insert-koin:koin-core",
-          "io.insert-koin:koin-compose",
-          "io.coil-kt.coil3:coil-compose",
-          "io.coil-kt.coil3:coil-network-okhttp",
-          "androidx.compose.material:material-icons-extended"
-        ],
+        "moduleDependency": [],
         "binaryLayout": "klib"
       }
     ]
