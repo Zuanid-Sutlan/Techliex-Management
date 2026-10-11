@@ -1,15 +1,37 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Kotlin / KMP
+.kotlin/
+.repos/
+
+# IDEs (Android Studio / IntelliJ / VS Code)
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+*.iws
+*.ipr
+.vscode/
+
+# OS Specific
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Local configuration
 local.properties
+
+# Compose Desktop / Native Packaging outputs
+/shared/build/
+/shared/desktop/
+*.dmg
+*.exe
+*.msi
+*.deb
+*.rpm
