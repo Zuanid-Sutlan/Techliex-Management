@@ -74,6 +74,7 @@ fun main() = application {
                 }
 
                 val isLogin = currentRoute?.contains("LoginScreen") == true || currentRoute == null
+                val isDashboardOrLogin = currentRoute?.contains("DashboardScreen") == true || currentRoute?.contains("LoginScreen") == true
 
                 val navGraphContent = @Composable {
                     NavGraph(
@@ -112,10 +113,14 @@ fun main() = application {
                         }
                     ) {
                         navGraphContent()
+                        if (!isDashboardOrLogin){
+                            Loading(showLoading = loadingState)
+                        }
                     }
                 }
-
-                Loading(showLoading = loadingState)
+                if (isDashboardOrLogin){
+                    Loading(showLoading = loadingState)
+                }
 
                 SnackBarHost(
                     hostState = snackBarHostState,

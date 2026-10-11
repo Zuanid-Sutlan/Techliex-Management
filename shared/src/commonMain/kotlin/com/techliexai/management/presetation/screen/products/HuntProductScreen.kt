@@ -1,185 +1,138 @@
 package com.techliexai.management.presetation.screen.products
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ImageNotSupported
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SearchOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.techliexai.management.domain.model.ProductHunt
-import com.techliexai.management.presetation.screen.orders.OrderScreenAction
-import com.techliexai.management.presetation.screen.product_add.AddProductScreenAction
 import coil3.compose.AsyncImage
-import com.techliexai.management.presetation.utils.toImageBytes
+import com.techliexai.management.domain.model.ProductHunt
 
 @Composable
 fun HuntProductScreen(
     state: HuntProductScreenState,
     onAction: (HuntProductScreenAction) -> Unit
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize()) {
-        Box(
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        val isDesktop = maxWidth >= 840.dp
+
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
-                .background(Color(0xFF121212))
+                .padding(horizontal = if (isDesktop) 32.dp else 16.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                // --- Header Section ---
-//                Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
-//                    Text(
-//                        text = "Product Hunts",
-//                        color = Color.White,
-//                        fontSize = 28.sp,
-//                        fontWeight = FontWeight.ExtraBold
-//                    )
-//                    Text(
-//                        text = "Discover and share winning products",
-//                        color = Color.Gray,
-//                        fontSize = 14.sp
-//                    )
-//                }
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { onAction(HuntProductScreenAction.OnNavigateBackClicked) }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.Yellow)
-                    }
+            // --- Desktop Header Bar ---
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
                     Text(
                         text = "Product Hunts",
-                        color = Color.White,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Discover and share winning products across the organization.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
-                // --- Search Bar ---
-                OutlinedTextField(
-                    value = state.searchQuery,
-                    onValueChange = { onAction(HuntProductScreenAction.OnSearchQueryChanged(it)) },
-                    placeholder = { Text("Search products...", color = Color.Gray) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    leadingIcon = {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = null,
-                            tint = Color.Yellow
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Yellow,
-                        unfocusedBorderColor = Color.Gray.copy(0.3f),
-//                    textColor = Color.White,
-                        cursorColor = Color.Yellow
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // --- Product Grid/List ---
-                val filteredProducts = state.products.filter {
-                    it.title.contains(state.searchQuery, ignoreCase = true)
+                Button(
+                    onClick = { onAction(HuntProductScreenAction.OnAddProductClicked) },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(14.dp),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Add Product", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
                 }
+            }
 
-                if (filteredProducts.isEmpty()) {
+            // --- Toolbar / Search Bar ---
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = 1.dp,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    OutlinedTextField(
+                        value = state.searchQuery,
+                        onValueChange = { onAction(HuntProductScreenAction.OnSearchQueryChanged(it)) },
+                        placeholder = { Text("Search products by title...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                            unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                            disabledBorderColor = androidx.compose.ui.graphics.Color.Transparent
+                        )
+                    )
+                }
+            }
+
+            // --- Product Grid ---
+            val filteredProducts = state.products.filter {
+                it.title.contains(state.searchQuery, ignoreCase = true)
+            }
+
+            if (filteredProducts.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
                     EmptyProductsState()
-                } else {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 100.dp)
-                    ) {
-                        items(filteredProducts) { product ->
-                            ProductHuntCard(
-                                product = product,
-                                onClick = {
-                                    onAction(
-                                        HuntProductScreenAction.OnProductClicked(product)
-                                    )
-                                }
-                            )
-                        }
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 340.dp),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    modifier = Modifier.fillMaxSize().weight(1f),
+                    contentPadding = PaddingValues(bottom = 32.dp)
+                ) {
+                    items(filteredProducts) { product ->
+                        ProductHuntCard(
+                            product = product,
+                            onClick = {
+                                onAction(HuntProductScreenAction.OnProductClicked(product))
+                            }
+                        )
                     }
                 }
             }
-
-            // --- Manual Floating Action Button ---
-            Button(
-                onClick = { onAction(HuntProductScreenAction.OnAddProductClicked) },
-                modifier = Modifier
-                    .padding(bottom = 36.dp, end = 24.dp)
-                    .align(Alignment.BottomEnd),
-                shape = RoundedCornerShape(16.dp),
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Yellow,
-                    contentColor = Color.Black
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Product",
-                    tint = Color.Black,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-//        // --- Add Product FAB ---
-//        FloatingActionButton(
-//            onClick = {  },
-//            backgroundColor = Color.Yellow,
-//            shape = RoundedCornerShape(16.dp),
-//            modifier = Modifier
-//                .align(Alignment.BottomEnd)
-//                .padding(24.dp)
-//        ) {
-//            Icon(Icons.Default.Add, contentDescription = "Add Product", tint = Color.Black)
-//        }
         }
     }
 }
@@ -189,21 +142,21 @@ fun ProductHuntCard(
     product: ProductHunt,
     onClick: () -> Unit
 ) {
-    Card(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(Color(0xFF1E1E1E)),
+        color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        tonalElevation = 2.dp
     ) {
         Column {
-            // --- Image Section ---
-            val imageUrl = product.productImage.ifEmpty { "https://picsum.photos/400" }
-
-            Box(modifier = Modifier
-                .height(180.dp)
-                .fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .height(180.dp)
+                    .fillMaxWidth()
+            ) {
                 AsyncImage(
                     model = product.productImage.ifEmpty { "https://picsum.photos/400" },
                     contentDescription = product.title,
@@ -211,29 +164,27 @@ fun ProductHuntCard(
                     contentScale = ContentScale.Crop
                 )
 
-                // --- Price Tag Overlay ---
                 Surface(
-                    color = Color.Yellow,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.fillMaxWidth().align(Alignment.BottomEnd),
                     shape = RoundedCornerShape(topStart = 16.dp)
                 ) {
                     Text(
                         text = "Warehouse Price: $${if (product.warehousePrice == 0) "N/A" else product.warehousePrice}",
-                        color = Color.Black,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 16.sp
+                        fontSize = 14.sp
                     )
                 }
             }
 
-            // --- Content Section ---
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(20.dp)) {
                 Text(
                     text = product.title,
-                    color = Color.White,
-                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -242,8 +193,8 @@ fun ProductHuntCard(
 
                 Text(
                     text = product.description,
-                    color = Color.Gray,
-                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -254,14 +205,14 @@ fun ProductHuntCard(
                     Icon(
                         Icons.Default.Person,
                         contentDescription = null,
-                        tint = Color.Yellow,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(14.dp)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Added by ${product.addedBy}",
-                        color = Color.Yellow,
-                        fontSize = 11.sp
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -279,9 +230,14 @@ fun EmptyProductsState() {
         Icon(
             Icons.Default.SearchOff,
             contentDescription = null,
-            tint = Color.Gray,
-            modifier = Modifier.size(64.dp)
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+            modifier = Modifier.size(72.dp)
         )
-        Text("No product hunts found.", color = Color.Gray)
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "No product hunts found.",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
