@@ -32,30 +32,30 @@ fun DashboardContent(padding: PaddingValues, state: DashboardState, onAction: (D
             .padding(padding)
             .background(MaterialTheme.colorScheme.background)
     ) {
-        val isDesktop = maxWidth >= 840.dp
-        val horizontalPadding = if (isDesktop) 32.dp else 16.dp
-        val verticalPadding = if (isDesktop) 32.dp else 16.dp
+        val windowWidth = maxWidth
+        val horizontalPadding = if (windowWidth >= 900.dp) 32.dp else 20.dp
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(horizontal = horizontalPadding, vertical = 28.dp),
+            verticalArrangement = Arrangement.spacedBy(28.dp)
         ) {
-            // Header Banner
+            // Responsive Desktop Header Banner
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 2.dp
+                tonalElevation = 2.dp,
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Row(
                     modifier = Modifier.padding(24.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "Welcome back, ${state.name}!",
                             style = MaterialTheme.typography.headlineMedium,
@@ -64,12 +64,14 @@ fun DashboardContent(padding: PaddingValues, state: DashboardState, onAction: (D
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Role: ${state.userRole} • Here's your enterprise overview today.",
+                            text = "Role: ${state.userRole} • Here is your Techliex enterprise overview today.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    if (isDesktop) {
+
+                    if (windowWidth >= 650.dp) {
+                        Spacer(modifier = Modifier.width(16.dp))
                         Surface(
                             shape = RoundedCornerShape(12.dp),
                             color = MaterialTheme.colorScheme.primaryContainer
@@ -86,7 +88,7 @@ fun DashboardContent(padding: PaddingValues, state: DashboardState, onAction: (D
                 }
             }
 
-            // Overview Section
+            // Overview Metrics Section (Responsive Grid Columns)
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
                     text = "Overview Metrics",
@@ -95,52 +97,67 @@ fun DashboardContent(padding: PaddingValues, state: DashboardState, onAction: (D
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                if (isDesktop) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        StatCard(
-                            title = "Product Hunts",
-                            value = state.products.toString(),
-                            icon = Icons.Default.ShoppingBag,
-                            modifier = Modifier.weight(1f)
-                        )
-                        StatCard(
-                            title = "Active Orders",
-                            value = state.activeOrders.toString(),
-                            icon = Icons.Default.LocalShipping,
-                            modifier = Modifier.weight(1f)
-                        )
-                        StatCard(
-                            title = "Total Revenue Shared",
-                            value = state.totalEarnings,
-                            icon = Icons.Default.People,
-                            modifier = Modifier.weight(1f),
-                            isHighlight = true
-                        )
-                    }
-                } else {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                when {
+                    windowWidth >= 1050.dp -> {
+                        // 3 Columns Row
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            horizontalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
-                            StatCard("Product Hunts", state.products.toString(), Icons.Default.ShoppingBag, Modifier.weight(1f))
-                            StatCard("Active Orders", state.activeOrders.toString(), Icons.Default.LocalShipping, Modifier.weight(1f))
+                            StatCard(
+                                title = "Product Hunts",
+                                value = state.products.toString(),
+                                icon = Icons.Default.ShoppingBag,
+                                modifier = Modifier.weight(1f)
+                            )
+                            StatCard(
+                                title = "Active Orders",
+                                value = state.activeOrders.toString(),
+                                icon = Icons.Default.LocalShipping,
+                                modifier = Modifier.weight(1f)
+                            )
+                            StatCard(
+                                title = "Total Revenue Shared",
+                                value = state.totalEarnings,
+                                icon = Icons.Default.People,
+                                modifier = Modifier.weight(1f),
+                                isHighlight = true
+                            )
                         }
-                        StatCard(
-                            title = "Total Revenue Shared",
-                            value = state.totalEarnings,
-                            icon = Icons.Default.People,
-                            modifier = Modifier.fillMaxWidth(),
-                            isHighlight = true
-                        )
+                    }
+
+                    windowWidth >= 680.dp -> {
+                        // 2 Columns Row + Full Width Row
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                StatCard("Product Hunts", state.products.toString(), Icons.Default.ShoppingBag, Modifier.weight(1f))
+                                StatCard("Active Orders", state.activeOrders.toString(), Icons.Default.LocalShipping, Modifier.weight(1f))
+                            }
+                            StatCard(
+                                title = "Total Revenue Shared",
+                                value = state.totalEarnings,
+                                icon = Icons.Default.People,
+                                modifier = Modifier.fillMaxWidth(),
+                                isHighlight = true
+                            )
+                        }
+                    }
+
+                    else -> {
+                        // Stacked 1 Column
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            StatCard("Product Hunts", state.products.toString(), Icons.Default.ShoppingBag, Modifier.fillMaxWidth())
+                            StatCard("Active Orders", state.activeOrders.toString(), Icons.Default.LocalShipping, Modifier.fillMaxWidth())
+                            StatCard("Total Revenue Shared", state.totalEarnings, Icons.Default.People, Modifier.fillMaxWidth(), isHighlight = true)
+                        }
                     }
                 }
             }
 
-            // Quick Actions Section
+            // Quick Actions Section (Responsive Columns)
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
                     text = "Quick Actions",
@@ -149,7 +166,7 @@ fun DashboardContent(padding: PaddingValues, state: DashboardState, onAction: (D
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                if (isDesktop) {
+                if (windowWidth >= 680.dp) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
@@ -171,16 +188,18 @@ fun DashboardContent(padding: PaddingValues, state: DashboardState, onAction: (D
                     }
                 } else {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        ActionRow(
+                        ActionCard(
                             title = "Share Order Details",
                             subtitle = "Notify mentor to ship product",
                             icon = Icons.Default.LocalShipping,
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = { onAction(DashboardAction.OnNavigateContentClicked(DrawerItems.ORDERS)) }
                         )
-                        ActionRow(
+                        ActionCard(
                             title = "Hunt History",
                             subtitle = "Check status of previous hunts",
                             icon = Icons.Default.History,
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = { onAction(DashboardAction.OnNavigateContentClicked(DrawerItems.PRODUCTS)) }
                         )
                     }
@@ -205,7 +224,8 @@ fun StatCard(
             contentColor = if (isHighlight) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
         ),
         shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isHighlight) 6.dp else 2.dp)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isHighlight) 4.dp else 1.dp)
     ) {
         Row(
             modifier = Modifier.padding(24.dp),
@@ -216,7 +236,7 @@ fun StatCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
-                    color = if (isHighlight) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = if (isHighlight) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f) else MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = value,
@@ -227,7 +247,7 @@ fun StatCard(
             }
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(50.dp)
                     .clip(CircleShape)
                     .background(
                         if (isHighlight) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f)
@@ -239,7 +259,7 @@ fun StatCard(
                     imageVector = icon,
                     contentDescription = null,
                     tint = if (isHighlight) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(26.dp)
                 )
             }
         }
@@ -258,7 +278,8 @@ fun ActionCard(
         modifier = modifier.clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier.padding(24.dp),
@@ -267,7 +288,7 @@ fun ActionCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(52.dp)
+                    .size(50.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
@@ -291,35 +312,6 @@ fun ActionCard(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun ActionRow(title: String, subtitle: String, icon: ImageVector, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth().clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(18.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(22.dp))
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }

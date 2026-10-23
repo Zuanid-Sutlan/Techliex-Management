@@ -1,20 +1,81 @@
-# Gradle
+# ==========================================
+# Gradle & Build Outputs
+# ==========================================
 .gradle/
 build/
 **/build/
+*.apk
+*.aab
+*.aar
+*.jar
+*.class
+.gradletasknamecache
+captures/
 
-# Kotlin / KMP
+# ==========================================
+# Kotlin Multiplatform & Caches
+# ==========================================
 .kotlin/
 .repos/
+kotlin-js-store/
+.konan/
+*.klib
 
-# IDEs (Android Studio / IntelliJ / VS Code)
+# ==========================================
+# Android & Native Build
+# ==========================================
+.externalNativeBuild/
+.cxx/
+native-libs/
+ndkBuild/
+
+# ==========================================
+# IDEs & Editors (Android Studio / IntelliJ / VS Code)
+# ==========================================
 .idea/
 *.iml
 *.iws
 *.ipr
+out/
 .vscode/
+.fleet/
+*.hprof
 
-# OS Specific
+# ==========================================
+# Local Configuration, Secrets & Keys
+# ==========================================
+local.properties
+secrets.properties
+.env
+.env.*
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+*.asc
+
+# ==========================================
+# Desktop / Compose Native Packaging Outputs
+# ==========================================
+/shared/desktop/
+*.dmg
+*.exe
+*.msi
+*.deb
+*.rpm
+*.pkg
+
+# ==========================================
+# iOS / Xcode (if applicable)
+# ==========================================
+DerivedData/
+Pods/
+.swiftpm/
+
+# ==========================================
+# Operating System Files
+# ==========================================
 .DS_Store
 .DS_Store?
 ._*
@@ -24,14 +85,9 @@ ehthumbs.db
 Thumbs.db
 Desktop.ini
 
-# Local configuration
-local.properties
-
-# Compose Desktop / Native Packaging outputs
-/shared/build/
-/shared/desktop/
-*.dmg
-*.exe
-*.msi
-*.deb
-*.rpm
+# ==========================================
+# Temporary & Log Files
+# ==========================================
+*.log
+tmp/
+.tmp/

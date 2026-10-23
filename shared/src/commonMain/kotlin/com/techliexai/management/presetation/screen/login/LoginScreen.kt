@@ -7,20 +7,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.techliexai.management.ui.theme.DeveloperSignature
+import com.techliexai.management.ui.theme.TechliexBrandHeader
 
 @Composable
 fun LoginScreen(
@@ -32,66 +31,80 @@ fun LoginScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        val isDesktop = maxWidth > 800.dp
+        val windowWidth = maxWidth
+        val isWideView = windowWidth >= 900.dp
 
-        if (isDesktop) {
+        if (isWideView) {
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Left Pane: Company & Software Details
+                // Left Pane: Techliex Management Platform Information
                 Column(
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(1.2f)
                         .fillMaxHeight()
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
-                        .padding(48.dp),
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f))
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 48.dp, vertical = 40.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
+                    TechliexBrandHeader(logoSize = 52.dp, showTagline = true)
+
+                    Spacer(modifier = Modifier.height(28.dp))
+
                     Text(
-                        text = "Techliex Management",
+                        text = "Enterprise Operations & Workflow System",
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 40.sp,
-                        fontWeight = FontWeight.Bold
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 38.sp
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Enterprise Management & Workflow Suite",
+                        text = "Unified Management Platform",
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Streamline your business operations, orders, product hunting, and team collaboration efficiently across Android and Desktop platforms.",
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                        text = "Streamline team members, product hunts, customer orders, and warehouse logistics efficiently across desktop workstations.",
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.75f),
                         fontSize = 14.sp,
-                        lineHeight = 20.sp
+                        lineHeight = 22.sp
                     )
                     Spacer(modifier = Modifier.height(32.dp))
+
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            text = "Version 1.0 • KMP Desktop & Mobile",
+                            text = "Techliex Management v1.0 • Desktop Suite",
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(40.dp))
+
+                    DeveloperSignature(
+                        onClick = { onAction(LoginScreenAction.OnDeveloperInfoClicked) }
+                    )
                 }
 
-                // Right Pane: Login Form Content
+                // Right Pane: Desktop Login Form Card
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
                         .verticalScroll(rememberScrollState())
-                        .padding(48.dp),
+                        .padding(horizontal = 48.dp, vertical = 40.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -99,24 +112,32 @@ fun LoginScreen(
                 }
             }
         } else {
-            // Mobile layout: centered fields
-            Column(
+            // Narrower Window Layout: Centered Login Container
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .padding(28.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Techliex Management",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                LoginFormContent(state, onAction)
+                Surface(
+                    modifier = Modifier
+                        .widthIn(max = 500.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(24.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 4.dp,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        TechliexBrandHeader(logoSize = 48.dp, showTagline = true)
+                        Spacer(modifier = Modifier.height(24.dp))
+                        LoginFormContent(state, onAction)
+                    }
+                }
             }
         }
     }
@@ -132,14 +153,16 @@ fun LoginFormContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Welcome Back",
+            text = "Welcome to Techliex",
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold
         )
 
+        Spacer(modifier = Modifier.height(6.dp))
+
         Text(
-            text = "Sign in to continue (admin / admin)",
+            text = "Sign in to your enterprise account (admin / admin)",
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
             fontSize = 14.sp
         )
@@ -182,7 +205,7 @@ fun LoginFormContent(
             onClick = { onAction(LoginScreenAction.OnLoginClicked) },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(52.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -190,7 +213,7 @@ fun LoginFormContent(
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
-                text = "LOGIN",
+                text = "SIGN IN",
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 2.sp
             )
@@ -207,33 +230,15 @@ fun LoginFormContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onAction(LoginScreenAction.OnDeveloperInfoClicked) },
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Code,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "Developed by Zunaid Sultan",
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                fontSize = 12.sp,
-                fontStyle = FontStyle.Italic
-            )
-        }
+        DeveloperSignature(
+            modifier = Modifier.clickable { onAction(LoginScreenAction.OnDeveloperInfoClicked) },
+            onClick = { onAction(LoginScreenAction.OnDeveloperInfoClicked) }
+        )
     }
 }

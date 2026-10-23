@@ -11,6 +11,7 @@ import androidx.compose.ui.window.rememberWindowState
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.techliexai.management.ui.theme.ManagementTheme
+import com.techliexai.management.ui.theme.ThemeManager
 import com.techliexai.management.presetation.navigation.NavGraph
 import com.techliexai.management.presetation.navigation.Screen
 import com.techliexai.management.presetation.navigation.NavDestination
@@ -33,7 +34,7 @@ fun main() = application {
         KoinApplication(application = {
             modules(sharedAppModule)
         }) {
-            ManagementTheme(darkTheme = true) {
+            ManagementTheme(themeMode = ThemeManager.currentThemeMode) {
                 val snackBarHostState = remember { SnackbarHostState() }
                 var snackBarMessageType by remember { mutableStateOf(MessageType.INFO) }
                 var loadingState by remember { mutableStateOf(false) }

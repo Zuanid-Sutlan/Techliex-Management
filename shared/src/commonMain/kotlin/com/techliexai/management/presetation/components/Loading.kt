@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,7 +20,7 @@ fun Loading(showLoading: Boolean = false) {
                 .background(Color(0x80000000)),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = Color.Yellow)
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
         }
     }
 }

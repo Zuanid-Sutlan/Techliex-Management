@@ -17,12 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.techliexai.management.presetation.components.enums.MessageType
-import com.techliexai.management.ui.theme.ColorError
-import com.techliexai.management.ui.theme.ColorGreen
-import com.techliexai.management.ui.theme.ColorWarning
+import com.techliexai.management.ui.theme.ResolvaxError
+import com.techliexai.management.ui.theme.ResolvaxSuccess
+import com.techliexai.management.ui.theme.ResolvaxWarning
 
 @Composable
 fun SnackBarHost(
@@ -44,7 +43,7 @@ fun SnackBarHost(
                         .align(Alignment.TopCenter),
                     shape = RoundedCornerShape(12.dp),
                     elevation = CardDefaults.cardElevation(6.dp),
-                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background)
+                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
                 ) {
                     Row(
                         modifier = Modifier
@@ -63,10 +62,10 @@ fun SnackBarHost(
                             contentDescription = null,
                             modifier = Modifier.size(24.dp),
                             tint = when(type) {
-                                MessageType.SUCCESS -> ColorGreen
-                                MessageType.ERROR -> ColorError
-                                MessageType.WARNING -> ColorWarning
-                                MessageType.INFO -> Color.Gray
+                                MessageType.SUCCESS -> ResolvaxSuccess
+                                MessageType.ERROR -> ResolvaxError
+                                MessageType.WARNING -> ResolvaxWarning
+                                MessageType.INFO -> MaterialTheme.colorScheme.primary
                             }
                         )
 
@@ -74,7 +73,8 @@ fun SnackBarHost(
 
                         Text(
                             text = data.visuals.message,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
