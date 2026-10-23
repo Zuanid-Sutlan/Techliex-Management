@@ -35,45 +35,69 @@ fun HuntProductScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        val isDesktop = maxWidth >= 840.dp
+        val windowWidth = maxWidth
+        val horizontalPadding = if (windowWidth >= 900.dp) 32.dp else 20.dp
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = if (isDesktop) 32.dp else 16.dp, vertical = 24.dp),
+                .padding(horizontal = horizontalPadding, vertical = 28.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // --- Desktop Header Bar ---
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
+            // --- Responsive Desktop Header Bar ---
+            if (windowWidth >= 650.dp) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Product Hunts Directory",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Discover winning products, warehouse evaluation, and source links across the team.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Button(
+                        onClick = { onAction(HuntProductScreenAction.OnAddProductClicked) },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Add Product", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
+                    }
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        text = "Product Hunts",
-                        style = MaterialTheme.typography.headlineMedium,
+                        text = "Product Hunts Directory",
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Discover and share winning products across the organization.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Button(
-                    onClick = { onAction(HuntProductScreenAction.OnAddProductClicked) },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    shape = RoundedCornerShape(14.dp),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Add Product", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
+                    Button(
+                        onClick = { onAction(HuntProductScreenAction.OnAddProductClicked) },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Add Product", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
 
@@ -86,7 +110,7 @@ fun HuntProductScreen(
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
@@ -94,7 +118,7 @@ fun HuntProductScreen(
                     OutlinedTextField(
                         value = state.searchQuery,
                         onValueChange = { onAction(HuntProductScreenAction.OnSearchQueryChanged(it)) },
-                        placeholder = { Text("Search products by title...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                        placeholder = { Text("Search product hunts by title or description...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -106,7 +130,7 @@ fun HuntProductScreen(
                 }
             }
 
-            // --- Product Grid ---
+            // --- Responsive Desktop Product Grid ---
             val filteredProducts = state.products.filter {
                 it.title.contains(state.searchQuery, ignoreCase = true)
             }
@@ -117,7 +141,7 @@ fun HuntProductScreen(
                 }
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 340.dp),
+                    columns = GridCells.Adaptive(minSize = 280.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier.fillMaxSize().weight(1f),
@@ -147,7 +171,7 @@ fun ProductHuntCard(
             .fillMaxWidth()
             .clickable { onClick() },
         color = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(18.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         tonalElevation = 2.dp
     ) {
@@ -174,7 +198,7 @@ fun ProductHuntCard(
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 14.sp
+                        fontSize = 13.sp
                     )
                 }
             }

@@ -39,45 +39,69 @@ fun OrdersScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        val isDesktop = maxWidth >= 840.dp
+        val windowWidth = maxWidth
+        val horizontalPadding = if (windowWidth >= 900.dp) 32.dp else 20.dp
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = if (isDesktop) 32.dp else 16.dp, vertical = 24.dp),
+                .padding(horizontal = horizontalPadding, vertical = 28.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // --- Desktop Header Bar ---
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
+            // --- Responsive Desktop Header Bar ---
+            if (windowWidth >= 650.dp) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Orders & Customer Shipments",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Track customer orders, delivery milestones, and shipment payments.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Button(
+                        onClick = { EventManager.navigateTo(Screen.AddOrderScreen) },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Add Order", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
+                    }
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        text = "Orders & Shipments",
-                        style = MaterialTheme.typography.headlineMedium,
+                        text = "Orders & Customer Shipments",
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Manage customer orders, delivery status, and shipments.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Button(
-                    onClick = { EventManager.navigateTo(Screen.AddOrderScreen) },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    shape = RoundedCornerShape(14.dp),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Add Order", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
+                    Button(
+                        onClick = { EventManager.navigateTo(Screen.AddOrderScreen) },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Add Order", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
 
@@ -90,7 +114,7 @@ fun OrdersScreen(
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
@@ -98,7 +122,7 @@ fun OrdersScreen(
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        placeholder = { Text("Search orders by product or address...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                        placeholder = { Text("Search orders by ID, product, or shipping address...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -110,14 +134,14 @@ fun OrdersScreen(
                 }
             }
 
-            // --- Orders Grid ---
+            // --- Responsive Desktop Orders Grid ---
             if (filteredOrders.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
                     EmptyOrdersState()
                 }
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 340.dp),
+                    columns = GridCells.Adaptive(minSize = 280.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier.fillMaxSize().weight(1f),
@@ -144,7 +168,7 @@ fun OrderItem(order: Order, onClick: () -> Unit) {
             .fillMaxWidth()
             .clickable { onClick() },
         color = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(18.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         tonalElevation = 2.dp
     ) {
@@ -154,7 +178,7 @@ fun OrderItem(order: Order, onClick: () -> Unit) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(52.dp)
+                    .size(48.dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {

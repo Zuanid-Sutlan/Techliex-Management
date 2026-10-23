@@ -13,20 +13,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warehouse
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -42,11 +40,11 @@ fun WarehouseDetailsDialog(
     onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
-        // Main Container
         Surface(
             shape = RoundedCornerShape(28.dp),
-            color = Color(0xFF1E1E1E), // Dark Gray/Black
+            color = MaterialTheme.colorScheme.surface,
             tonalElevation = 8.dp,
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -57,11 +55,10 @@ fun WarehouseDetailsDialog(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Icon and Title
                 Icon(
                     imageVector = Icons.Default.Warehouse,
                     contentDescription = null,
-                    tint = Color.Yellow,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)
                 )
 
@@ -70,7 +67,7 @@ fun WarehouseDetailsDialog(
                 Text(
                     text = "Warehouse Management",
                     style = androidx.compose.ui.text.TextStyle(
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -78,21 +75,19 @@ fun WarehouseDetailsDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // --- Input Fields ---
                 OutlinedTextField(
                     value = if (state.warehousePrice == 0) "" else state.warehousePrice.toString(),
                     onValueChange = {
                         onAction(ProductDetailScreenAction.OnWarehousePriceChanged(it.toIntOrNull() ?: 0))
                     },
-                    label = { Text("Warehouse Price", color = Color.Gray) },
+                    label = { Text("Warehouse Price") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Yellow,
-                        unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f),
-//                        textColor = Color.White,
-                        cursorColor = Color.Yellow,
-                        focusedLabelColor = Color.Yellow
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -102,14 +97,13 @@ fun WarehouseDetailsDialog(
                 OutlinedTextField(
                     value = state.warehouseNote,
                     onValueChange = { onAction(ProductDetailScreenAction.OnWarehouseNoteChanged(it)) },
-                    label = { Text("Warehouse Note", color = Color.Gray) },
+                    label = { Text("Warehouse Note") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Yellow,
-                        unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f),
-//                        textColor = Color.White,
-                        cursorColor = Color.Yellow,
-                        focusedLabelColor = Color.Yellow
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
                     ),
                     shape = RoundedCornerShape(12.dp),
                     minLines = 3
@@ -117,14 +111,13 @@ fun WarehouseDetailsDialog(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // --- Action Buttons ---
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("CANCEL", color = Color.Gray, fontWeight = FontWeight.SemiBold)
+                        Text("CANCEL", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
                     }
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -134,11 +127,14 @@ fun WarehouseDetailsDialog(
                             onAction(ProductDetailScreenAction.OnSaveWarehouseDetailsClicked)
                             onDismiss()
                         },
-                        colors = ButtonDefaults.buttonColors(Color.Yellow),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.height(48.dp).padding(horizontal = 8.dp)
                     ) {
-                        Text("SAVE DETAILS", color = Color.Black, fontWeight = FontWeight.ExtraBold)
+                        Text("SAVE DETAILS", fontWeight = FontWeight.ExtraBold)
                     }
                 }
             }

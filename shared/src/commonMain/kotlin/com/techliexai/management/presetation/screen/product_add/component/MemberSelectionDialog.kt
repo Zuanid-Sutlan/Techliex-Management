@@ -25,7 +25,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.techliexai.management.domain.model.User
@@ -41,12 +40,12 @@ fun MemberSelectionDialog(
         Column(
             modifier = Modifier
                 .wrapContentSize()
-                .background(Color(0xFF121212), RoundedCornerShape(12.dp))
-                .border(BorderStroke(1.dp, Color.Yellow), shape = RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
+                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), shape = RoundedCornerShape(16.dp))
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Select Members", style = MaterialTheme.typography.titleMedium)
+            Text(text = "Select Members", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.width(16.dp))
             FlowRow(modifier = Modifier) {
                 members.forEach { user ->
@@ -70,7 +69,10 @@ fun MemberSelectionDialog(
                     .height(50.dp),
                 shape = RoundedCornerShape(12.dp),
                 enabled = selectedList.isNotEmpty(),
-                colors = ButtonDefaults.buttonColors(Color.Yellow),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 onClick = { onSaveMemberSelection(selectedList); onDismiss() }
             ) {
                 Text(text = "Save")
@@ -78,7 +80,6 @@ fun MemberSelectionDialog(
         }
     }
 }
-
 
 @Composable
 fun UserItemView(user: User, isSelected: Boolean, onSelectUser: (Boolean) -> Unit) {
@@ -92,9 +93,12 @@ fun UserItemView(user: User, isSelected: Boolean, onSelectUser: (Boolean) -> Uni
             onCheckedChange = {
                 onSelectUser(it)
             },
-            colors = CheckboxDefaults.colors(Color.Yellow)
+            colors = CheckboxDefaults.colors(
+                checkedColor = MaterialTheme.colorScheme.primary,
+                checkmarkColor = MaterialTheme.colorScheme.onPrimary
+            )
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text = user.name, style = MaterialTheme.typography.bodyMedium)
+        Text(text = user.name, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
     }
 }
